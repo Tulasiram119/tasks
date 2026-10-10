@@ -1,0 +1,34 @@
+name: Build Debug APK
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  debug-apk:
+    name: Build Debug APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Gradle & Java
+        uses: ./.github/actions/setup-gradle
+
+      - name: Build Debug APKs
+        run: ./gradlew :app:assembleGenericDebug :app:assembleGoogleplayDebug
+
+      - name: Upload Generic Debug APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: app-generic-debug.apk
+          path: app/build/outputs/apk/generic/debug/*.apk
+
+      - name: Upload Google Play Debug APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: app-googleplay-debug.apk
+          path: app/build/outputs/apk/googleplay/debug/*.apk
